@@ -30,7 +30,7 @@ from their own phone or computer.
 
 ## Tech stack
 
-- **HTML + vanilla JavaScript**: the whole game lives in `public/index.html`
+- **HTML + vanilla JavaScript**: the game lives in `public/index.html`, with questions in `public/trivia.json`
 - **Tailwind CSS** (via CDN) for styling, with the VT323 and Inter Google Fonts
 - **Firebase Realtime Database** to sync rooms, players, questions and answers live
 - **Firebase Hosting** for deployment, via GitHub Actions
@@ -39,7 +39,8 @@ from their own phone or computer.
 
 ```
 public/
-  index.html          # The entire app: UI, styles, trivia questions and game logic
+  index.html          # The app: UI, styles and game logic
+  trivia.json         # The trivia rounds and questions
   404.html            # Not-found page
 firebase.json         # Firebase Hosting config (serves the public/ folder)
 .firebaserc           # Firebase project alias (y2k-trivia)
@@ -48,28 +49,39 @@ firebase.json         # Firebase Hosting config (serves the public/ folder)
 
 ## Running locally
 
-There's no build step. It's a static site, so you can either:
+There's no build step, but the site needs to be served over HTTP (opening
+`index.html` directly from disk won't work, since browsers block loading
+`trivia.json` from `file://`). Either of these works:
 
-- Open `public/index.html` directly in your browser, or
-- Use the Firebase CLI to serve it:
+```bash
+# Firebase CLI
+npm install -g firebase-tools
+firebase serve
 
-  ```bash
-  npm install -g firebase-tools
-  firebase serve
-  ```
+# or any static file server, e.g.
+npx serve public
+```
 
 > **Note:** the app connects to the real `y2k-trivia` Firebase database even when run locally.
 
 ## Editing the questions
 
-The questions are in the `triviaData` array inside `public/index.html`. Each question
-looks like:
+The questions live in `public/trivia.json`, as a list of rounds:
 
-```js
-{ type: "mcq", q: "Question text?", a: "Correct answer", options: ["A", "B", "C", "D"] }
-// or, for a free-text answer:
-{ type: "text", q: "Question text?", a: "Correct answer" }
+```json
+[
+  {
+    "round": "Round 1: Cartoons & Nick/Disney",
+    "questions": [
+      { "type": "mcq", "q": "Question text?", "a": "Correct answer", "options": ["A", "B", "C", "D"] },
+      { "type": "text", "q": "Question text?", "a": "Correct answer" }
+    ]
+  }
+]
 ```
+
+- `type`: `"mcq"` (multiple choice) or `"text"` (free-text answer)
+- `options`: only for `mcq`; `a` must exactly match one of the options
 
 ## Deployment
 

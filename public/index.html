@@ -371,49 +371,15 @@
         }
     });
 
-    // EXACT POP CULTURE Y2K TRIVIA DATA
-    const triviaData = [
-        {
-            round: "Round 1: Cartoons & Nick/Disney",
-            questions: [
-                { type: "mcq", q: "According to Patrick Star in SpongeBob SquarePants, is mayonnaise an instrument?", a: "No", options: ["Yes", "No", "Maybe", "Tartar Sauce"] },
-                { type: "mcq", q: "What is the name of Kim Possible's naked mole rat?", a: "Rufus", options: ["Ron", "Reggie", "Rufus", "Randy"] },
-                { type: "mcq", q: "What are the names of Timmy Turner's two fairy godparents?", a: "Cosmo and Wanda", options: ["Cosmo and Wanda", "Chip and Dale", "Flora and Fauna", "Mickey and Minnie"] },
-                { type: "mcq", q: "What kind of animal is Perry, Phineas and Ferb's secret agent pet?", a: "Platypus", options: ["Beaver", "Iguana", "Dog", "Platypus"] },
-                { type: "mcq", q: "What is the name of Jimmy Neutron's robotic dog?", a: "Goddard", options: ["Astro", "Pluto", "Goddard", "Sparky"] }
-            ]
-        },
-        {
-            round: "Round 2: Teen Pop Music",
-            questions: [
-                { type: "text", q: "What Destiny's Child song starts with 'Question, tell me what you think about me'?", a: "Independent Women (Part 1)" },
-                { type: "mcq", q: "Fill in the blank of this Avril Lavigne lyric: 'He was a boy, she was a girl... He was a ______?'", a: "Sk8er Boi", options: ["Sk8er Boi", "Punk Rocker", "Total Loser", "Bad Boy"] },
-                { type: "text", q: "What Hilary Duff hit song asks 'Why not take a crazy chance, why not do a crazy dance?'", a: "Why Not" },
-                { type: "mcq", q: "What 2003 Outkast song famously tells you to 'shake it like a Polaroid picture'?", a: "Hey Ya!", options: ["Ms. Jackson", "B.O.B", "Hey Ya!", "Roses"] },
-                { type: "text", q: "Which 2000 Britney Spears song features the lyric 'But I thought the old lady dropped it into the ocean in the end'?", a: "Oops!... I Did It Again" }
-            ]
-        },
-        {
-            round: "Round 3: DCOMs (Disney Channel Original Movies)",
-            questions: [
-                { type: "mcq", q: "What is the name of the high school where Troy and Gabriella sing in High School Musical?", a: "East High", options: ["North High", "East High", "West High", "South High"] },
-                { type: "text", q: "What magical item causes Anna and her mom to switch bodies in the 2003 movie Freaky Friday?", a: "A fortune cookie" },
-                { type: "mcq", q: "What is the name of the stuck-up pop star played by Joe Jonas who gets sent to Camp Rock?", a: "Shane Gray", options: ["Nate", "Jason", "Nick", "Shane Gray"] },
-                { type: "text", q: "Who tells Mia Thermopolis that she is actually the Princess of Genovia?", a: "Queen Clarisse / Her grandmother" },
-                { type: "text", q: "What are the first names of the four main Cheetah Girls?", a: "Galleria, Chanel, Dorinda, Aqua" }
-            ]
-        },
-        {
-            round: "Round 4: Books & Fads",
-            questions: [
-                { type: "text", q: "What toy franchise launched in 2001 featuring dolls with 'a passion for fashion' and giant heads?", a: "Bratz" },
-                { type: "text", q: "What is the name of the vampire family that Bella Swan meets in Twilight?", a: "The Cullens" },
-                { type: "text", q: "What is the name of the magical summer camp Percy Jackson attends?", a: "Camp Half-Blood" },
-                { type: "text", q: "What colorful plastic bracelets shaped like animals were traded by everyone in school in the late 2000s?", a: "Silly Bandz" },
-                { type: "text", q: "What sport is played on flying broomsticks with Bludgers and a Snitch?", a: "Quidditch" }
-            ]
-        }
-    ];
+    // Trivia questions live in trivia.json (only the host needs them; players get
+    // each question from the database).
+    let triviaData = [];
+    const triviaReady = fetch('trivia.json')
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
+        .then(data => { triviaData = data; });
 
     let gameState = {
         role: null,
@@ -427,7 +393,17 @@
     };
 
     // UI Routing Helpers
-    function selectRole(role) {
+    async function selectRole(role) {
+        if (role === 'host') {
+            // The host needs the questions before the game can run
+            try {
+                await triviaReady;
+            } catch (err) {
+                console.error('Failed to load trivia.json', err);
+                alert("Couldn't load the trivia questions (trivia.json). Please refresh and try again.");
+                return;
+            }
+        }
         gameState.role = role;
         document.getElementById("view-role-select").classList.add("hidden");
         if (role === 'host') {
