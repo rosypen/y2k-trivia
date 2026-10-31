@@ -15,8 +15,9 @@ from their own phone or computer.
 3. The host starts the game, goes over the rules, and runs through the rounds.
 4. Each question has a **30-second timer**. Teams can submit and change their answer
    until time runs out.
-5. Answers show up live in the host's inbox. The host can reveal the correct answer
-   and award **100 points** per correct answer.
+5. Answers show up live in the host's inbox. Each correct answer is worth **100 points**:
+   multiple-choice answers are scored automatically when time runs out, and free-text
+   answers are scored by the host (who can reveal the correct answer to check).
 6. A leaderboard is shown after each round, with final standings at the end.
 
 ## The rounds

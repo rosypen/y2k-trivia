@@ -262,7 +262,7 @@
                     <li>There are 4 rounds of Y2K Pop Trivia.</li>
                     <li><strong>Round 1</strong> is all Multiple Choice. The rest mix it up!</li>
                     <li>You have <strong>30 seconds</strong> to submit your team's answer.</li>
-                    <li>Points are awarded by the host manually (100 pts per correct answer).</li>
+                    <li>Each correct answer is worth 100 pts. Multiple choice is scored automatically when time runs out; free-text answers are scored by the host.</li>
                     <li>The Leaderboard will be revealed at the end of each round.</li>
                 </ul>
                 <button onclick="hostStartRound(0)" class="w-full py-4 bg-njGreen nj-btn text-xl mt-4">
@@ -358,6 +358,16 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Firebase server clock offset (ms). Host and players can have device clocks that
+    // disagree by several seconds, so all timer math uses server time instead.
+    let serverTimeOffset = 0;
+    db.ref('.info/serverTimeOffset').on('value', (snap) => {
+        serverTimeOffset = snap.val() || 0;
+    });
+    function serverNow() {
+        return Date.now() + serverTimeOffset;
+    }
+
     // Update connection status visual
     const dbRefStatus = db.ref('.info/connected');
     dbRefStatus.on("value", (snap) => {
@@ -389,7 +399,10 @@
         currentRoundIdx: 0,
         currentQIdx: 0,
         isGameActive: false,
-        timerInterval: null
+        timerInterval: null,
+        lastSubmissions: {},  // latest submissions snapshot, for re-rendering the inbox
+        mcqScored: false,     // whether the current MCQ question has been auto-scored
+        mcqResults: {}        // playerId -> true/false (correct) once auto-scored
     };
 
     // UI Routing Helpers
@@ -423,8 +436,7 @@
         const totalDuration = 30000; // 30s
         
         gameState.timerInterval = setInterval(() => {
-            const now = Date.now();
-            const remaining = endTimeTarget - now;
+            const remaining = endTimeTarget - serverNow();
             
             if (remaining <= 0) {
                 clearInterval(gameState.timerInterval);
@@ -526,8 +538,11 @@
             mcqContainer.classList.add("hidden");
         }
 
-        const endTime = Date.now() + 30000;
-        startTimerSync(endTime, "host-timer-fill", "host-timer-text");
+        gameState.mcqScored = false;
+        gameState.mcqResults = {};
+
+        const endTime = serverNow() + 30000;
+        startTimerSync(endTime, "host-timer-fill", "host-timer-text", scoreMcqQuestion);
 
         db.ref(`rooms/${gameState.roomCode}`).update({
             currentQuestion: q.q,
@@ -540,7 +555,37 @@
         db.ref(`rooms/${gameState.roomCode}/submissions`).set(null);
     }
 
-    function hostNextQuestion() {
+    // Auto-score the current multiple-choice question. Runs once per question: when the
+    // timer expires, or when the host moves on early (whichever comes first). Players can
+    // change their answer until then, so we only score the final submissions.
+    async function scoreMcqQuestion() {
+        const q = triviaData[gameState.currentRoundIdx].questions[gameState.currentQIdx];
+        if (q.type !== 'mcq' || gameState.mcqScored) return;
+        gameState.mcqScored = true;
+
+        const roomRef = db.ref(`rooms/${gameState.roomCode}`);
+        const snap = await roomRef.child('submissions').once('value');
+        const subs = snap.val() || {};
+        const results = {};
+        await Promise.all(Object.keys(subs).map(playerId => {
+            const correct = subs[playerId].answer === q.a;
+            results[playerId] = correct;
+            if (!correct) return null;
+            return roomRef.child(`players/${playerId}/score`).transaction(current => (current || 0) + 100);
+        }));
+        gameState.mcqResults = results;
+        renderHostSubmissions(gameState.lastSubmissions);
+    }
+
+    async function hostNextQuestion() {
+        // Guard against double-clicks while scoring is in flight (would skip a question)
+        if (gameState.advancing) return;
+        gameState.advancing = true;
+        try {
+            await scoreMcqQuestion();
+        } finally {
+            gameState.advancing = false;
+        }
         const round = triviaData[gameState.currentRoundIdx];
         if (gameState.currentQIdx < round.questions.length - 1) {
             gameState.currentQIdx++;
@@ -572,8 +617,12 @@
     }
 
     function renderHostSubmissions(subs) {
+        gameState.lastSubmissions = subs;
         const listEl = document.getElementById("host-submissions-list");
         const keys = Object.keys(subs);
+        const round = triviaData[gameState.currentRoundIdx];
+        const currentQ = round && round.questions[gameState.currentQIdx];
+        const isMcq = currentQ && currentQ.type === 'mcq';
         if (keys.length === 0) {
             listEl.innerHTML = `<div class="text-gray-400 text-center py-10 font-sans font-medium">Empty (｡•́︿•̀｡)</div>`;
             return;
@@ -583,9 +632,20 @@
             const sub = subs[playerId];
             const div = document.createElement("div");
             div.className = "nj-item flex flex-col p-3 gap-2";
+            let action;
+            if (!isMcq) {
+                // Free text: host decides and awards manually
+                action = `<button onclick="awardPoints('${playerId}', 100)" class="nj-btn bg-njPink py-1 text-sm h-8 self-end px-4 w-full">✓ 100 pts</button>`;
+            } else if (!gameState.mcqScored) {
+                action = `<div class="text-xs font-sans font-bold text-gray-400 text-center">auto-scored when time's up</div>`;
+            } else if (gameState.mcqResults[playerId]) {
+                action = `<div class="bg-njGreen border-2 border-black rounded-lg text-sm font-pixel text-center py-1">✓ CORRECT +100</div>`;
+            } else {
+                action = `<div class="bg-gray-100 border-2 border-black rounded-lg text-sm font-pixel text-center py-1 text-gray-500">✗ INCORRECT</div>`;
+            }
             div.innerHTML = `
                 <span class="font-sans font-bold text-sm truncate">${sub.playerName}: <span class="font-normal text-gray-700">${sub.answer}</span></span>
-                <button onclick="awardPoints('${playerId}', 100)" class="nj-btn bg-njPink py-1 text-sm h-8 self-end px-4 w-full">✓ 100 pts</button>
+                ${action}
             `;
             listEl.appendChild(div);
         });
