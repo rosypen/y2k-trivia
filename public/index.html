@@ -197,6 +197,11 @@
                 </div>
                 <div class="nj-timer-bg"><div class="nj-timer-fill" id="player-timer-fill"></div></div>
                 
+                <!-- Submission Status Banner -->
+                <div id="player-sub-status" class="hidden bg-njGreen border-2 border-black p-2 rounded-lg text-xs font-sans font-bold text-center">
+                    ✓ Submitted! Feel free to edit your answer until time runs out.
+                </div>
+
                 <div id="player-q-text" class="text-xl font-sans font-bold min-h-[60px] flex items-center justify-center">Loading question...</div>
                 
                 <div id="player-mcq-input" class="hidden grid grid-cols-1 gap-3">
@@ -205,24 +210,22 @@
 
                 <div id="player-text-input" class="hidden space-y-4">
                     <input type="text" id="player-answer-input" placeholder="type answer..." class="w-full p-3 nj-input text-center font-bold">
-                    <button onclick="submitPlayerAnswer()" class="w-full py-3 bg-njPink nj-btn">
+                    <button onclick="submitPlayerAnswer()" class="w-full py-3 bg-njPink nj-btn" id="player-submit-btn">
                         SEND IT 💌
                     </button>
                 </div>
             </div>
 
             <div id="player-submitted-state" class="hidden py-10">
-                <h3 class="text-3xl font-pixel text-gray-800 mb-2" id="player-submitted-title">LOCKED IN! 🔒</h3>
-                <p class="font-sans text-sm text-gray-500 font-medium">Waiting for grades...</p>
+                <!-- Kept as fallback if needed -->
             </div>
         </div>
     </div>
 
-    <!-- VIEW 4: HOST DASHBOARD -->
-    <div id="view-host-dash" class="hidden w-full space-y-6">
-        
-        <!-- Lobby Info Window -->
-        <div class="nj-window" id="host-lobby-header">
+    <!-- HOST CONTAINER WRAPPER -->
+    <div id="view-host-container" class="hidden w-full space-y-6">
+        <!-- HOST DASHBOARD -->
+        <div id="view-host-dash" class="nj-window">
             <div class="nj-titlebar bg-njBlue">
                 <span>⚙ HOST_CONTROL</span>
                 <span class="controls">_ □ ×</span>
@@ -337,7 +340,7 @@
 
 </main>
 
-<!-- FIREBASE & GAME LOGIC SCRIPT (Untouched Logic, Updated HTML string templates) -->
+<!-- FIREBASE & GAME LOGIC SCRIPT -->
 <script>
     // YOUR EXACT FIREBASE CONFIGURATION
     const firebaseConfig = {
@@ -428,6 +431,7 @@
         gameState.role = role;
         document.getElementById("view-role-select").classList.add("hidden");
         if (role === 'host') {
+            document.getElementById("view-host-container").classList.remove("hidden");
             initHostMode();
         } else {
             document.getElementById("view-player-login").classList.remove("hidden");
@@ -684,6 +688,13 @@
                 document.getElementById("player-submitted-state").classList.add("hidden");
                 document.getElementById("player-active-state").classList.remove("hidden");
                 
+                // Reset submission status banner on new question
+                const subStatus = document.getElementById("player-sub-status");
+                if (gameState.lastQNum !== roomData.questionNumber) {
+                    gameState.lastQNum = roomData.questionNumber;
+                    subStatus.classList.add("hidden");
+                }
+
                 document.getElementById("player-q-num").innerText = `Q${roomData.questionNumber}`;
                 document.getElementById("player-q-text").innerText = roomData.currentQuestion;
                 
@@ -699,15 +710,20 @@
                 } else {
                     mcqDiv.classList.add("hidden");
                     txtDiv.classList.remove("hidden");
-                    document.getElementById("player-answer-input").value = "";
-                    document.getElementById("player-answer-input").disabled = false;
+                    const textInput = document.getElementById("player-answer-input");
+                    textInput.disabled = false;
+                    document.getElementById("player-submit-btn").disabled = false;
                 }
                 
                 if (roomData.endTime) {
                     startTimerSync(roomData.endTime, "player-timer-fill", "player-timer-text", () => {
-                        document.getElementById("player-answer-input").disabled = true;
-                        document.getElementById("player-mcq-input").innerHTML = `<div class="text-red-500 font-bold">Time's up!</div>`;
-                        document.getElementById("player-submitted-title").innerText = "TIME'S UP! ⏰";
+                        const textInput = document.getElementById("player-answer-input");
+                        if(textInput) textInput.disabled = true;
+                        const subBtn = document.getElementById("player-submit-btn");
+                        if(subBtn) subBtn.disabled = true;
+                        document.getElementById("player-mcq-input").innerHTML = `<div class="text-red-500 font-bold text-center">Time's up! ⏰</div>`;
+                        subStatus.innerText = "⏰ Time's up! Final answer locked in.";
+                        subStatus.classList.remove("hidden");
                     });
                 }
 
@@ -749,9 +765,10 @@
             timestamp: firebase.database.ServerValue.TIMESTAMP
         });
 
-        document.getElementById("player-active-state").classList.add("hidden");
-        document.getElementById("player-submitted-state").classList.remove("hidden");
-        document.getElementById("player-submitted-title").innerText = "LOCKED IN! 🔒";
+        // Show non-jarring success banner while keeping fields interactive
+        const subStatus = document.getElementById("player-sub-status");
+        subStatus.innerText = "✓ Submitted! Feel free to edit your answer until time runs out.";
+        subStatus.classList.remove("hidden");
     }
 </script>
 </body>
