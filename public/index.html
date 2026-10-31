@@ -358,6 +358,16 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Firebase server clock offset (ms). Host and players can have device clocks that
+    // disagree by several seconds, so all timer math uses server time instead.
+    let serverTimeOffset = 0;
+    db.ref('.info/serverTimeOffset').on('value', (snap) => {
+        serverTimeOffset = snap.val() || 0;
+    });
+    function serverNow() {
+        return Date.now() + serverTimeOffset;
+    }
+
     // Update connection status visual
     const dbRefStatus = db.ref('.info/connected');
     dbRefStatus.on("value", (snap) => {
@@ -447,8 +457,7 @@
         const totalDuration = 30000; // 30s
         
         gameState.timerInterval = setInterval(() => {
-            const now = Date.now();
-            const remaining = endTimeTarget - now;
+            const remaining = endTimeTarget - serverNow();
             
             if (remaining <= 0) {
                 clearInterval(gameState.timerInterval);
@@ -550,7 +559,7 @@
             mcqContainer.classList.add("hidden");
         }
 
-        const endTime = Date.now() + 30000;
+        const endTime = serverNow() + 30000;
         startTimerSync(endTime, "host-timer-fill", "host-timer-text");
 
         db.ref(`rooms/${gameState.roomCode}`).update({
