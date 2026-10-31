@@ -50,6 +50,7 @@ from their own phone or computer.
 public/
   index.html          # The app: UI, styles and game logic
   trivia.json         # The trivia rounds and questions
+  test-trivia.json    # A short set of test questions for quick demos (host with ?test)
   results.js          # The final Results show (animation timeline, synthesized sounds, confetti)
   results.css         # Results styles (Frutiger Aero: glass, gel podiums, bubbles)
   results-demo.html   # Preview the Results screen with sample teams
@@ -95,6 +96,14 @@ The questions live in `public/trivia.json`, as a list of rounds:
 
 - `type`: `"mcq"` (multiple choice) or `"text"` (free-text answer)
 - `options`: only for `mcq`; `a` must exactly match one of the options
+
+## Demoing with test questions
+
+For a quick demo or to test a change, host with `?test` in the URL (e.g.
+https://y2k-trivia.web.app/?test or `http://localhost:3000/?test`). The host then loads
+`public/test-trivia.json` instead of the real questions: 2 short rounds with a mix of
+multiple-choice and free-text questions, so a full game takes a few minutes. The host
+dashboard shows a **TEST QUESTIONS** badge. Teams join normally (no `?test` needed).
 
 ## Previewing the Results screen
 

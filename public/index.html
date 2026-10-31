@@ -246,6 +246,7 @@
                 <div class="text-center md:text-left">
                     <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Phase</span>
                     <div id="host-round-title" class="text-lg font-bold">Lobby</div>
+                    <span id="host-test-badge" class="hidden text-xs font-pixel bg-njYellow border-2 border-black rounded px-1">TEST QUESTIONS</span>
                 </div>
                 <div class="flex justify-center md:justify-end">
                     <button onclick="hostStartGame()" id="btn-start-game" class="px-6 py-2 bg-njYellow nj-btn text-xl">
@@ -415,9 +416,12 @@
     }
 
     // Trivia questions live in trivia.json (only the host needs them; players get
-    // each question from the database).
+    // each question from the database). Hosting with ?test loads the short
+    // test-trivia.json instead, for quick demos.
+    const USE_TEST_QUESTIONS = new URLSearchParams(location.search).has('test');
+    const TRIVIA_FILE = USE_TEST_QUESTIONS ? 'test-trivia.json' : 'trivia.json';
     let triviaData = [];
-    const triviaReady = fetch('trivia.json')
+    const triviaReady = fetch(TRIVIA_FILE)
         .then(res => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.json();
@@ -447,8 +451,8 @@
             try {
                 await triviaReady;
             } catch (err) {
-                console.error('Failed to load trivia.json', err);
-                alert("Couldn't load the trivia questions (trivia.json). Please refresh and try again.");
+                console.error(`Failed to load ${TRIVIA_FILE}`, err);
+                alert(`Couldn't load the trivia questions (${TRIVIA_FILE}). Please refresh and try again.`);
                 return;
             }
         }
@@ -501,6 +505,7 @@
         document.getElementById("view-host-dash").classList.remove("hidden");
         document.getElementById("host-room-code").innerText = gameState.roomCode;
         document.getElementById("host-round-title").innerText = "Lobby";
+        if (USE_TEST_QUESTIONS) document.getElementById("host-test-badge").classList.remove("hidden");
 
         const roomRef = db.ref(`rooms/${gameState.roomCode}`);
         roomRef.set({
