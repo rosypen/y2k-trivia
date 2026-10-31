@@ -1,0 +1,16 @@
+[
+  {
+    "round": "Test Round 1: Speed MCQ",
+    "questions": [
+      { "type": "mcq", "q": "TEST: What color is the sky on a clear day?", "a": "Blue", "options": ["Blue", "Green", "Red", "Purple"] },
+      { "type": "mcq", "q": "TEST: How many legs does a cat have?", "a": "4", "options": ["2", "3", "4", "6"] }
+    ]
+  },
+  {
+    "round": "Test Round 2: Speed Free Text",
+    "questions": [
+      { "type": "text", "q": "TEST: Type the word 'pizza'", "a": "pizza" },
+      { "type": "mcq", "q": "TEST: Which is a fruit?", "a": "Apple", "options": ["Apple", "Carrot", "Potato", "Onion"] }
+    ]
+  }
+]
