@@ -15,9 +15,13 @@ from their own phone or computer.
 3. The host starts the game, goes over the rules, and runs through the rounds.
 4. Each question has a **30-second timer**. Teams can submit and change their answer
    until time runs out.
-5. Answers show up live in the host's inbox. Each correct answer is worth **100 points**:
-   multiple-choice answers are scored automatically when time runs out, and free-text
-   answers are scored by the host (who can reveal the correct answer to check).
+5. Answers show up live in the host's inbox, along with how long each team took.
+   **Faster answers score more**, timed from when the question opened to the team's
+   *last* submitted answer (changing an answer resets the clock):
+   - **Multiple choice** is scored automatically when time runs out: a correct answer
+     earns **50 to 100 points**, scaling with speed (instant = 100, buzzer = 50).
+   - **Free text** is scored by the host (who can reveal the correct answer to check):
+     a correct answer earns **100 points plus up to 50 bonus points** for speed.
 6. A leaderboard is shown after each round.
 7. The game ends with the **Results** show 🏆: a Frutiger Aero–style reveal with a
    drumroll, the top three rising on glossy podiums (confetti, crown, fanfare), and
