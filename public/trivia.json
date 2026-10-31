@@ -4,57 +4,57 @@
     "questions": [
       {
         "type": "mcq",
-        "q": "According to Patrick Star in SpongeBob SquarePants, is mayonnaise an instrument?",
-        "a": "No",
+        "q": "What was the title of the very first SpongeBob SquarePants episode ever aired?",
+        "a": "Help Wanted",
         "options": [
-          "Yes",
-          "No",
-          "Maybe",
-          "Tartar Sauce"
+          "Reef Blower",
+          "Tea at the Treedome",
+          "Bubblestand",
+          "Help Wanted"
         ]
       },
       {
         "type": "mcq",
-        "q": "What is the name of Kim Possible's naked mole rat?",
-        "a": "Rufus",
+        "q": "In The Fairly OddParents, what is the name of Timmy Turner's favorite comic book superhero?",
+        "a": "The Crimson Chin",
         "options": [
-          "Ron",
-          "Reggie",
-          "Rufus",
-          "Randy"
+          "Crash Nebula",
+          "The Crimson Chin",
+          "Catman",
+          "Mighty Mom"
         ]
       },
       {
         "type": "mcq",
-        "q": "What are the names of Timmy Turner's two fairy godparents?",
-        "a": "Cosmo and Wanda",
+        "q": "What is the name of the fictional fast-food restaurant where Kim Possible and Ron Stoppable frequently hang out?",
+        "a": "Bueno Nacho",
         "options": [
-          "Cosmo and Wanda",
-          "Chip and Dale",
-          "Flora and Fauna",
-          "Mickey and Minnie"
+          "Taco Supremo",
+          "Bueno Nacho",
+          "Señor Senior's Tacos",
+          "Nacho Boy"
         ]
       },
       {
         "type": "mcq",
-        "q": "What kind of animal is Perry, Phineas and Ferb's secret agent pet?",
-        "a": "Platypus",
+        "q": "In Phineas and Ferb, what is the name of Dr. Doofenshmirtz's teenage daughter?",
+        "a": "Vanessa",
         "options": [
-          "Beaver",
-          "Iguana",
-          "Dog",
-          "Platypus"
+          "Stacy",
+          "Candace",
+          "Vanessa",
+          "Isabella"
         ]
       },
       {
         "type": "mcq",
-        "q": "What is the name of Jimmy Neutron's robotic dog?",
-        "a": "Goddard",
+        "q": "In Avatar: The Last Airbender, who is the blind earthbending master that teaches Aang?",
+        "a": "Toph Beifong",
         "options": [
-          "Astro",
-          "Pluto",
-          "Goddard",
-          "Sparky"
+          "Katara",
+          "Suki",
+          "Toph Beifong",
+          "Azula"
         ]
       }
     ]
@@ -64,40 +64,40 @@
     "questions": [
       {
         "type": "text",
-        "q": "What Destiny's Child song starts with 'Question, tell me what you think about me'?",
-        "a": "Independent Women (Part 1)"
+        "q": "Which pop punk band released the iconic album 'Riot!' featuring the hit song 'Misery Business'?",
+        "a": "Paramore"
       },
       {
         "type": "mcq",
-        "q": "Fill in the blank of this Avril Lavigne lyric: 'He was a boy, she was a girl... He was a ______?'",
-        "a": "Sk8er Boi",
+        "q": "In the music video for Britney Spears' 'Toxic', which of these disguises does she NOT wear?",
+        "a": "A schoolgirl",
         "options": [
-          "Sk8er Boi",
-          "Punk Rocker",
-          "Total Loser",
-          "Bad Boy"
+          "A flight attendant",
+          "A superhero in black latex",
+          "A red-haired spy",
+          "A schoolgirl"
         ]
       },
       {
         "type": "text",
-        "q": "What Hilary Duff hit song asks 'Why not take a crazy chance, why not do a crazy dance?'",
-        "a": "Why Not"
+        "q": "What is the name of the fictional rock band fronted by Lindsay Lohan's character in the movie Freaky Friday?",
+        "a": "Pink Slip"
       },
       {
         "type": "mcq",
-        "q": "What 2003 Outkast song famously tells you to 'shake it like a Polaroid picture'?",
-        "a": "Hey Ya!",
+        "q": "Which boy band gave us the iconic choreographed dance to the lyric, 'Baby bye bye bye'?",
+        "a": "*NSYNC",
         "options": [
-          "Ms. Jackson",
-          "B.O.B",
-          "Hey Ya!",
-          "Roses"
+          "Backstreet Boys",
+          "*NSYNC",
+          "98 Degrees",
+          "O-Town"
         ]
       },
       {
         "type": "text",
-        "q": "Which 2000 Britney Spears song features the lyric 'But I thought the old lady dropped it into the ocean in the end'?",
-        "a": "Oops!... I Did It Again"
+        "q": "Gwen Stefani taught an entire generation how to spell what fruit in her hit song 'Hollaback Girl'?",
+        "a": "Banana (B-A-N-A-N-A-S)"
       }
     ]
   },
@@ -106,40 +106,40 @@
     "questions": [
       {
         "type": "mcq",
-        "q": "What is the name of the high school where Troy and Gabriella sing in High School Musical?",
-        "a": "East High",
+        "q": "In Zenon: Girl of the 21st Century, what is the name of the rock star that Zenon is completely obsessed with?",
+        "a": "Proto Zoa",
         "options": [
-          "North High",
-          "East High",
-          "West High",
-          "South High"
+          "Microbe",
+          "Cosmic Ray",
+          "Neon Supernova",
+          "Proto Zoa"
         ]
       },
       {
         "type": "text",
-        "q": "What magical item causes Anna and her mom to switch bodies in the 2003 movie Freaky Friday?",
-        "a": "A fortune cookie"
+        "q": "In Halloweentown, what is the name of Marnie Piper's magical grandmother played by Debbie Reynolds?",
+        "a": "Aggie Cromwell"
       },
       {
         "type": "mcq",
-        "q": "What is the name of the stuck-up pop star played by Joe Jonas who gets sent to Camp Rock?",
-        "a": "Shane Gray",
+        "q": "In High School Musical, what is the name of the uptempo song Ryan and Sharpay sing during their initial theater audition?",
+        "a": "What I've Been Looking For",
         "options": [
-          "Nate",
-          "Jason",
-          "Nick",
-          "Shane Gray"
+          "Bop to the Top",
+          "Stick to the Status Quo",
+          "What I've Been Looking For",
+          "We're All in This Together"
         ]
       },
       {
         "type": "text",
-        "q": "Who tells Mia Thermopolis that she is actually the Princess of Genovia?",
-        "a": "Queen Clarisse / Her grandmother"
+        "q": "In Camp Rock, what is the title of the song Mitchie writes and sings by herself at the piano when Shane overhears her?",
+        "a": "This Is Me"
       },
       {
         "type": "text",
-        "q": "What are the first names of the four main Cheetah Girls?",
-        "a": "Galleria, Chanel, Dorinda, Aqua"
+        "q": "What are the names of the two twin sisters (separated at birth) in the Halloween DCOM 'Twitches'?",
+        "a": "Alex and Camryn (or Apolla and Artemis)"
       }
     ]
   },
@@ -148,28 +148,28 @@
     "questions": [
       {
         "type": "text",
-        "q": "What toy franchise launched in 2001 featuring dolls with 'a passion for fashion' and giant heads?",
-        "a": "Bratz"
+        "q": "What brand of sneakers with removable wheels in the heels became a massive safety hazard in middle school hallways?",
+        "a": "Heelys"
       },
       {
         "type": "text",
-        "q": "What is the name of the vampire family that Bella Swan meets in Twilight?",
-        "a": "The Cullens"
+        "q": "In the Twilight series, what famously rainy town in Washington state does Bella Swan move to?",
+        "a": "Forks"
       },
       {
         "type": "text",
-        "q": "What is the name of the magical summer camp Percy Jackson attends?",
-        "a": "Camp Half-Blood"
+        "q": "What was the name of the incredibly popular digital pet toy shaped like an egg on a keychain that you had to feed and clean up after?",
+        "a": "Tamagotchi"
       },
       {
         "type": "text",
-        "q": "What colorful plastic bracelets shaped like animals were traded by everyone in school in the late 2000s?",
-        "a": "Silly Bandz"
+        "q": "In The Hunger Games series, what numbered district is Katniss Everdeen from?",
+        "a": "District 12"
       },
       {
         "type": "text",
-        "q": "What sport is played on flying broomsticks with Bludgers and a Snitch?",
-        "a": "Quidditch"
+        "q": "What brand of brightly colored foam clogs debuted in the 2000s and featured holes you could decorate with charms?",
+        "a": "Crocs"
       }
     ]
   }
