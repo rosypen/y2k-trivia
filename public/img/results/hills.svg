@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="backHill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9f27c"/>
+      <stop offset="1" stop-color="#5fbf3a"/>
+    </linearGradient>
+    <linearGradient id="midHill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9be35a"/>
+      <stop offset="0.55" stop-color="#4caf2a"/>
+      <stop offset="1" stop-color="#2f8a1c"/>
+    </linearGradient>
+    <linearGradient id="frontHill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ee04a"/>
+      <stop offset="0.4" stop-color="#3fae1f"/>
+      <stop offset="1" stop-color="#1f7a12"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0" r="0.8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- far hill -->
+  <path d="M0 230 C 220 120, 430 120, 640 200 S 1060 110, 1280 170 S 1520 150, 1600 180 L1600 420 L0 420 Z" fill="url(#backHill)" opacity="0.9"/>
+  <!-- middle hill -->
+  <path d="M0 300 C 260 190, 520 200, 760 270 S 1220 210, 1600 250 L1600 420 L0 420 Z" fill="url(#midHill)"/>
+  <path d="M60 282 C 300 200, 520 210, 730 262" stroke="url(#shine)" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <!-- front hill -->
+  <path d="M0 360 C 320 260, 700 280, 980 340 S 1400 300, 1600 320 L1600 420 L0 420 Z" fill="url(#frontHill)"/>
+  <path d="M0 360 C 320 260, 700 280, 980 340 S 1400 300, 1600 320 L1600 420 L0 420 Z" fill="url(#glow)"/>
+  <path d="M120 338 C 380 268, 680 282, 900 326" stroke="url(#shine)" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M1080 330 C 1250 300, 1420 300, 1560 312" stroke="url(#shine)" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- little glossy flowers -->
+  <g opacity="0.95">
+    <g transform="translate(240 350)"><circle r="7" fill="#fff"/><circle r="3.2" fill="#ffd23f"/></g>
+    <g transform="translate(300 368)"><circle r="5" fill="#ffe3f1"/><circle r="2.3" fill="#ff7ab8"/></g>
+    <g transform="translate(560 356)"><circle r="6" fill="#fff"/><circle r="2.8" fill="#ffd23f"/></g>
+    <g transform="translate(1180 360)"><circle r="7" fill="#fff"/><circle r="3.2" fill="#ffd23f"/></g>
+    <g transform="translate(1240 378)"><circle r="5" fill="#e3f6ff"/><circle r="2.3" fill="#3fb6ff"/></g>
+    <g transform="translate(1420 352)"><circle r="6" fill="#ffe3f1"/><circle r="2.8" fill="#ff7ab8"/></g>
+    <g transform="translate(820 372)"><circle r="5" fill="#fff"/><circle r="2.3" fill="#ffd23f"/></g>
+  </g>
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b8860b"/>
+      <stop offset="0.25" stop-color="#ffd84d"/>
+      <stop offset="0.5" stop-color="#fff3a8"/>
+      <stop offset="0.75" stop-color="#ffc21a"/>
+      <stop offset="1" stop-color="#a87300"/>
+    </linearGradient>
+    <linearGradient id="goldV" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe680"/>
+      <stop offset="1" stop-color="#c68a00"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4fc3ff"/>
+      <stop offset="0.5" stop-color="#0a7fd9"/>
+      <stop offset="1" stop-color="#05509a"/>
+    </linearGradient>
+  </defs>
+  <!-- handles -->
+  <path d="M46 52 C 6 52, 8 112, 58 118" stroke="url(#goldV)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M154 52 C 194 52, 192 112, 142 118" stroke="url(#goldV)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <!-- cup -->
+  <path d="M40 30 H160 V70 C160 118 132 146 100 146 C68 146 40 118 40 70 Z" fill="url(#gold)" stroke="#8a5d00" stroke-width="2"/>
+  <ellipse cx="100" cy="30" rx="60" ry="9" fill="#ffe680" stroke="#8a5d00" stroke-width="2"/>
+  <ellipse cx="100" cy="31" rx="50" ry="5" fill="#b8860b" opacity="0.6"/>
+  <!-- gloss -->
+  <path d="M54 40 C 56 92, 74 122, 92 132 C 70 128, 50 100, 50 44 Z" fill="url(#gloss)" opacity="0.9"/>
+  <!-- star -->
+  <path d="M100 62 L108 80 L128 82 L113 95 L118 115 L100 104 L82 115 L87 95 L72 82 L92 80 Z" fill="#fff8d0" stroke="#c68a00" stroke-width="2"/>
+  <!-- stem -->
+  <path d="M90 146 H110 L114 176 H86 Z" fill="url(#gold)" stroke="#8a5d00" stroke-width="2"/>
+  <rect x="70" y="174" width="60" height="12" rx="4" fill="url(#goldV)" stroke="#8a5d00" stroke-width="2"/>
+  <!-- glossy aqua base -->
+  <rect x="50" y="186" width="100" height="40" rx="10" fill="url(#base)" stroke="#033c75" stroke-width="2"/>
+  <rect x="56" y="190" width="88" height="15" rx="7" fill="url(#gloss)" opacity="0.8"/>
+  <text x="100" y="219" font-family="Nunito, Arial Rounded MT Bold, sans-serif" font-weight="900" font-size="16" fill="#fff" text-anchor="middle">#1</text>
+</svg>

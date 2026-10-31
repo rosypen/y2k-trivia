@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results demo ✧ Y2K Trivia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="results.css">
+    <style>
+        body { margin: 0; font-family: "Segoe UI", "Nunito", sans-serif; background: #0b7fe0; }
+        .demo-launch {
+            position: fixed; inset: 0; display: grid; place-items: center;
+            background: linear-gradient(180deg, #0b7fe0, #9fe2ff);
+        }
+        .demo-launch .rz-glass { padding: 32px 36px; text-align: center; max-width: 460px; color: #063b6e; }
+        .demo-launch h1 { margin: 0 0 6px; font-family: "Nunito", sans-serif; font-weight: 900; font-size: 34px; }
+        .demo-launch p { margin: 0 0 18px; font-weight: 600; }
+        .demo-launch .row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+        .demo-launch a.rz-btn { text-decoration: none; }
+    </style>
+</head>
+<body>
+    <!--
+      Preview the Results screen without playing a whole game.
+        ?teams=8            number of sample teams (default 8)
+        ?view=player&me=1   the phone view for the team in that position (1 = winner, 5 = a loser)
+        ?instant=1          skip the animation (jump to the end) — handy for screenshots
+        ?autostart=1        start immediately (no click; sound may be blocked by the browser)
+    -->
+    <div class="demo-launch" id="launch">
+        <div class="rz-glass">
+            <h1>✨ Results preview</h1>
+            <p>Sample teams, real animation. Turn your sound on 🔊</p>
+            <button class="rz-btn rz-green" id="go" type="button">▶ Start the show</button>
+            <div class="row">
+                <a class="rz-btn rz-grey rz-small" href="?view=player&me=1">📱 Phone: winner</a>
+                <a class="rz-btn rz-grey rz-small" href="?view=player&me=2">📱 Phone: 2nd</a>
+                <a class="rz-btn rz-grey rz-small" href="?view=player&me=3">📱 Phone: 3rd</a>
+                <a class="rz-btn rz-grey rz-small" href="?view=player&me=5">📱 Phone: loser</a>
+            </div>
+            <div class="row">
+                <a class="rz-btn rz-grey rz-small" href="?teams=3">3 teams</a>
+                <a class="rz-btn rz-grey rz-small" href="?teams=8">8 teams</a>
+                <a class="rz-btn rz-grey rz-small" href="?teams=14">14 teams</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="results.js"></script>
+    <script>
+        const params = new URLSearchParams(location.search);
+        const NAMES = ['Super Shy', 'Sk8er Bois', 'The Cheetah Girls', 'Bratz Pack', 'Team Edward', 'Silly Bandz',
+            'Quidditch Kids', 'Lizzie McGuire Fan Club', 'Tamagotchi Survivors', 'Dial-Up Divas', 'Frosted Tips',
+            'Juicy Couture', 'Razr Flip Squad', 'MySpace Top 8'];
+        const n = Math.max(0, Math.min(NAMES.length, parseInt(params.get('teams') || '8', 10)));
+        const SCORES = [1800, 1500, 1300, 1100, 900, 800, 800, 600, 500, 400, 300, 200, 100, 0];
+        const players = NAMES.slice(0, n).map((name, i) => ({ id: 'demo' + i, name, score: SCORES[i] }));
+
+        function start() {
+            document.getElementById('launch').remove();
+            if (params.get('view') === 'player') {
+                const me = Math.max(1, Math.min(n, parseInt(params.get('me') || '1', 10)));
+                const revealIn = params.get('instant') ? 0 : 2500;
+                Results.showPlayer({ players, playerId: players[me - 1].id, revealAt: Date.now() + revealIn });
+            } else {
+                Results.show(players, {
+                    instant: !!params.get('instant'),
+                    onNewGame: () => { location.href = location.pathname; },
+                });
+            }
+        }
+        document.getElementById('go').onclick = start;
+        if (params.get('view') === 'player') {
+            document.getElementById('go').textContent = `▶ Reveal (as #${params.get('me') || 1})`;
+        }
+        if (params.get('autostart') || params.get('instant')) start();
+    </script>
+</body>
+</html>
