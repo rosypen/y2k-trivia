@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soft Y2K Trivia ✧</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: VT323 (Pixel/Retro) & Inter (Clean/Modern) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=VT323&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        pixel: ['"VT323"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        njBlue: '#A2D2FF',
+                        njPink: '#FFC8DD',
+                        njYellow: '#FFF3B0',
+                        njGreen: '#b7e4c7',
+                        njBg: '#f4f7fa',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f4f7fa;
+            /* Soft retro graphing paper grid */
+            background-image: 
+              linear-gradient(#e1e8f0 1px, transparent 1px),
+              linear-gradient(90deg, #e1e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+            font-family: 'Inter', sans-serif;
+            color: #1a1a1a;
+        }
+
+        /* Neo-brutalist Pastel Windows */
+        .nj-window {
+            background: white;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .nj-titlebar {
+            border-bottom: 2px solid #000;
+            padding: 4px 12px;
+            font-family: 'VT323', monospace;
+            font-size: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .nj-titlebar .controls {
+            letter-spacing: 0.15em;
+            font-weight: bold;
+            cursor: default;
+        }
+
+        /* Clicky Retro Buttons */
+        .nj-btn {
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
+            border-radius: 8px;
+            transition: all 0.1s;
+            color: #000;
+            text-transform: uppercase;
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nj-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .nj-input {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .nj-input:focus {
+            outline: none;
+            background: #f4f7fa;
+        }
+
+        /* Inner list items */
+        .nj-item {
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .nj-timer-bg { background: #e1e8f0; border-2px solid #000; border-radius: 8px; height: 16px; width: 100%; overflow: hidden; margin-top: 8px; border: 2px solid black;}
+        .nj-timer-fill { background: #FFC8DD; height: 100%; width: 100%; transition: width 1s linear; border-right: 2px solid black; }
+        .blurred { filter: blur(10px); cursor: pointer; user-select: none; }
+        .blurred:hover { filter: blur(8px); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 md:p-6">
+
+    <!-- HEADER -->
+    <header class="flex justify-between items-center nj-window bg-white mb-6 p-0">
+        <div class="nj-titlebar bg-njYellow w-full border-b-0">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">✨</span>
+                <h1 class="text-2xl tracking-wide">Y2K_TRIVIA_PARTY.EXE</h1>
+            </div>
+            <div id="connection-status" class="px-2 py-1 rounded bg-white border-2 border-black text-sm">
+                SYS: <span id="status-text" class="text-red-500 font-bold">OFFLINE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow flex flex-col items-center justify-center max-w-5xl mx-auto w-full">
+
+        <!-- VIEW 1: ROLE SELECTION -->
+        <div id="view-role-select" class="w-full max-w-md nj-window">
+            <div class="nj-titlebar bg-njBlue">
+                <span>★ SELECT_MODE</span>
+                <span class="controls">_ □ ×</span>
+            </div>
+            <div class="p-8 text-center space-y-6">
+            <h2 class="text-xl font-sans font-bold">Choose your connection:</h2>
+            <div class="space-y-4">
+                <button onclick="selectRole('host')" class="w-full py-3 bg-njBlue nj-btn">
+                    👑 HOST THE GAME
+                </button>
+                <button onclick="selectRole('player')" class="w-full py-3 bg-njPink nj-btn">
+                    ♡ JOIN TEAM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: PLAYER LOGIN -->
+        <div id="view-player-login" class="hidden w-full max-w-md nj-window">
+            <div class="nj-titlebar bg-njPink">
+                <span>♡ JOIN_LOBBY</span>
+                <span class="controls">_ □ ×</span>
+            </div>
+            <div class="p-8 space-y-5 font-sans font-semibold">
+                <div>
+                    <label class="block text-sm mb-1 text-gray-600">Room Code:</label>
+                    <input type="text" id="input-room-code" placeholder="e.g. AB12" maxlength="4" class="w-full p-3 uppercase text-center text-xl nj-input font-bold tracking-widest">
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-gray-600">Team Name:</label>
+                    <input type="text" id="input-player-name" placeholder="e.g. Super Shy" class="w-full p-3 nj-input font-bold">
+                </div>
+                <button onclick="joinRoom()" class="w-full py-3 mt-2 bg-njYellow nj-btn">
+                    ENTER ✧
+                </button>
+                <button onclick="location.reload()" class="w-full text-sm text-gray-400 hover:text-black font-sans font-bold">cancel.exe</button>
+            </div>
+        </div>
+
+        <!-- VIEW 3: PLAYER SUBMISSION SCREEN -->
+    <div id="view-player-game" class="hidden w-full max-w-md nj-window">
+        <div class="nj-titlebar bg-njGreen">
+            <span>✧ PLAYER_TERM</span>
+            <span class="controls">_ □ ×</span>
+        </div>
+        <div class="p-6 text-center">
+            <div class="flex justify-between items-center border-b-2 border-black pb-3 mb-6">
+                <span id="player-display-name" class="text-lg font-sans font-bold">TEAM: --</span>
+                <span class="text-sm font-pixel font-bold bg-white border-2 border-black px-2 py-0.5 rounded">CONNECTED</span>
+            </div>
+            
+            <div id="player-waiting-state" class="py-12">
+                <h3 class="text-3xl font-pixel mb-2 text-gray-800 animate-pulse" id="player-waiting-title">Waiting for host...</h3>
+                <p class="font-sans text-sm text-gray-500 font-medium" id="player-waiting-subtitle">Stand by for the next phase (｡♥‿♥｡)</p>
+            </div>
+
+            <div id="player-active-state" class="hidden space-y-5">
+                <div class="flex justify-between items-center">
+                    <div class="text-lg font-pixel text-gray-600 bg-gray-100 border-2 border-black rounded inline-block px-3 py-1" id="player-q-num">Q1</div>
+                    <div class="text-sm font-sans font-bold text-red-500" id="player-timer-text">30s left</div>
+                </div>
+                <div class="nj-timer-bg"><div class="nj-timer-fill" id="player-timer-fill"></div></div>
+                
+                <div id="player-q-text" class="text-xl font-sans font-bold min-h-[60px] flex items-center justify-center">Loading question...</div>
+                
+                <div id="player-mcq-input" class="hidden grid grid-cols-1 gap-3">
+                    <!-- Filled dynamically -->
+                </div>
+
+                <div id="player-text-input" class="hidden space-y-4">
+                    <input type="text" id="player-answer-input" placeholder="type answer..." class="w-full p-3 nj-input text-center font-bold">
+                    <button onclick="submitPlayerAnswer()" class="w-full py-3 bg-njPink nj-btn">
+                        SEND IT 💌
+                    </button>
+                </div>
+            </div>
+
+            <div id="player-submitted-state" class="hidden py-10">
+                <h3 class="text-3xl font-pixel text-gray-800 mb-2" id="player-submitted-title">LOCKED IN! 🔒</h3>
+                <p class="font-sans text-sm text-gray-500 font-medium">Waiting for grades...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 4: HOST DASHBOARD -->
+    <div id="view-host-dash" class="hidden w-full space-y-6">
+        
+        <!-- Lobby Info Window -->
+        <div class="nj-window" id="host-lobby-header">
+            <div class="nj-titlebar bg-njBlue">
+                <span>⚙ HOST_CONTROL</span>
+                <span class="controls">_ □ ×</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 items-center font-sans bg-white">
+                <div class="text-center md:text-left">
+                    <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Room Code</span>
+                    <div id="host-room-code" class="text-4xl font-pixel tracking-widest bg-gray-100 border-2 border-black inline-block px-3 rounded">----</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Teams</span>
+                    <div id="host-player-count" class="text-2xl font-bold font-pixel">0 Teams</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="text-xs font-bold text-gray-500 uppercase block mb-1">Phase</span>
+                    <div id="host-round-title" class="text-lg font-bold">Lobby</div>
+                </div>
+                <div class="flex justify-center md:justify-end">
+                    <button onclick="hostStartGame()" id="btn-start-game" class="px-6 py-2 bg-njYellow nj-btn text-xl">
+                        START ▶
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOST RULES VIEW -->
+        <div id="host-rules-controls" class="hidden nj-window">
+            <div class="nj-titlebar bg-njYellow">
+                <span>📝 RULES.TXT</span>
+            </div>
+            <div class="p-8 bg-white space-y-6">
+                <h2 class="text-2xl font-sans font-bold">How to Play:</h2>
+                <ul class="list-disc pl-6 space-y-2 font-sans text-lg text-gray-700">
+                    <li>There are 4 rounds of Y2K Pop Trivia.</li>
+                    <li><strong>Round 1</strong> is all Multiple Choice. The rest mix it up!</li>
+                    <li>You have <strong>30 seconds</strong> to submit your team's answer.</li>
+                    <li>Points are awarded by the host manually (100 pts per correct answer).</li>
+                    <li>The Leaderboard will be revealed at the end of each round.</li>
+                </ul>
+                <button onclick="hostStartRound(0)" class="w-full py-4 bg-njGreen nj-btn text-xl mt-4">
+                    START ROUND 1 ✧
+                </button>
+            </div>
+        </div>
+
+        <!-- HOST ACTIVE GAME CONTROLS -->
+        <div id="host-game-controls" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Question Control Box -->
+            <div class="md:col-span-2 nj-window flex flex-col">
+                <div class="nj-titlebar bg-njPink">
+                    <span>❓ Q_BOARD</span>
+                    <span class="controls">_ □ ×</span>
+                </div>
+                <div class="p-6 space-y-5 bg-white flex-grow">
+                    <div class="flex justify-between items-center">
+                        <span id="host-q-indicator" class="text-lg font-pixel font-bold text-gray-600 bg-gray-100 border-2 border-black px-2 py-0.5 rounded">R1 | Q1/5</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-sans font-bold text-red-500" id="host-timer-text">30s</span>
+                            <button onclick="hostNextQuestion()" id="host-next-btn" class="px-4 py-1 bg-white nj-btn text-lg">
+                                NEXT ⏩
+                            </button>
+                        </div>
+                    </div>
+                    <div class="nj-timer-bg"><div class="nj-timer-fill" id="host-timer-fill"></div></div>
+                    <div id="host-current-q-text" class="text-2xl font-sans font-bold min-h-[80px] flex items-center">Waiting to start...</div>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-sm font-sans font-bold text-gray-600 hidden" id="host-mcq-options">
+                        <!-- Filled if MCQ -->
+                    </div>
+
+                    <div class="p-4 bg-njBg rounded-xl border-2 border-black relative">
+                        <span class="text-xs font-bold text-gray-500 uppercase block mb-1">CORRECT ANSWER:</span>
+                        <div id="host-current-q-answer" class="text-xl font-sans font-bold blurred" onclick="this.classList.remove('blurred')">--</div>
+                        <span class="absolute top-4 right-4 text-xs font-sans text-gray-400 pointer-events-none">(click to reveal)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Submissions Feed -->
+            <div class="nj-window flex flex-col h-80 md:h-auto">
+                <div class="nj-titlebar bg-njGreen">
+                    <span>📥 INBOX</span>
+                    <span class="controls">_ □ ×</span>
+                </div>
+                <div class="p-5 bg-white flex-grow flex flex-col">
+                    <div id="host-submissions-list" class="flex-grow overflow-y-auto space-y-3 pr-2">
+                        <div class="text-gray-400 text-center py-10 font-sans font-medium">Empty (｡•́︿•̀｡)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD SECTION -->
+        <div id="host-leaderboard-view" class="hidden nj-window">
+            <div class="nj-titlebar bg-njYellow">
+                <span>🏆 LEADERBOARD.TXT</span>
+                <button onclick="hostResetScores()" class="text-sm border-2 border-black bg-white px-2 py-0.5 hover:bg-gray-200">Reset</button>
+            </div>
+            <div class="p-6 bg-white space-y-6">
+                <h2 class="text-2xl font-sans font-bold text-center" id="leaderboard-title">End of Round Standings</h2>
+                <div id="host-leaderboard-list" class="space-y-3 max-w-2xl mx-auto">
+                    <div class="text-gray-400 text-center py-6 font-sans font-medium">No players joined yet.</div>
+                </div>
+                <div class="flex justify-center mt-6">
+                    <button onclick="hostAdvanceFromLeaderboard()" id="btn-advance-leaderboard" class="px-8 py-3 bg-njBlue nj-btn text-xl">
+                        START NEXT ROUND ▶
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- FIREBASE & GAME LOGIC SCRIPT (Untouched Logic, Updated HTML string templates) -->
+<script>
+    // YOUR EXACT FIREBASE CONFIGURATION
+    const firebaseConfig = {
+        apiKey: "AIzaSyDqD4DLbBoTtT0FWxVZwIaQc_IEo-pEsmk",
+        authDomain: "y2k-trivia.firebaseapp.com",
+        databaseURL: "https://y2k-trivia-default-rtdb.firebaseio.com/",
+        projectId: "y2k-trivia",
+        storageBucket: "y2k-trivia.firebasestorage.app",
+        messagingSenderId: "822982795840",
+        appId: "1:822982795840:web:74d079e83a9c9416daf5a5",
+        measurementId: "G-C9TFQB32DQ"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Update connection status visual
+    const dbRefStatus = db.ref('.info/connected');
+    dbRefStatus.on("value", (snap) => {
+        const statusEl = document.getElementById("status-text");
+        if (snap.val() === true) {
+            statusEl.innerText = "ONLINE";
+            statusEl.className = "text-green-500 font-bold";
+        } else {
+            statusEl.innerText = "OFFLINE";
+            statusEl.className = "text-red-500 font-bold";
+        }
+    });
+
+    // EXACT POP CULTURE Y2K TRIVIA DATA
+    const triviaData = [
+        {
+            round: "Round 1: Cartoons & Nick/Disney",
+            questions: [
+                { type: "mcq", q: "According to Patrick Star in SpongeBob SquarePants, is mayonnaise an instrument?", a: "No", options: ["Yes", "No", "Maybe", "Tartar Sauce"] },
+                { type: "mcq", q: "What is the name of Kim Possible's naked mole rat?", a: "Rufus", options: ["Ron", "Reggie", "Rufus", "Randy"] },
+                { type: "mcq", q: "What are the names of Timmy Turner's two fairy godparents?", a: "Cosmo and Wanda", options: ["Cosmo and Wanda", "Chip and Dale", "Flora and Fauna", "Mickey and Minnie"] },
+                { type: "mcq", q: "What kind of animal is Perry, Phineas and Ferb's secret agent pet?", a: "Platypus", options: ["Beaver", "Iguana", "Dog", "Platypus"] },
+                { type: "mcq", q: "What is the name of Jimmy Neutron's robotic dog?", a: "Goddard", options: ["Astro", "Pluto", "Goddard", "Sparky"] }
+            ]
+        },
+        {
+            round: "Round 2: Teen Pop Music",
+            questions: [
+                { type: "text", q: "What Destiny's Child song starts with 'Question, tell me what you think about me'?", a: "Independent Women (Part 1)" },
+                { type: "mcq", q: "Fill in the blank of this Avril Lavigne lyric: 'He was a boy, she was a girl... He was a ______?'", a: "Sk8er Boi", options: ["Sk8er Boi", "Punk Rocker", "Total Loser", "Bad Boy"] },
+                { type: "text", q: "What Hilary Duff hit song asks 'Why not take a crazy chance, why not do a crazy dance?'", a: "Why Not" },
+                { type: "mcq", q: "What 2003 Outkast song famously tells you to 'shake it like a Polaroid picture'?", a: "Hey Ya!", options: ["Ms. Jackson", "B.O.B", "Hey Ya!", "Roses"] },
+                { type: "text", q: "Which 2000 Britney Spears song features the lyric 'But I thought the old lady dropped it into the ocean in the end'?", a: "Oops!... I Did It Again" }
+            ]
+        },
+        {
+            round: "Round 3: DCOMs (Disney Channel Original Movies)",
+            questions: [
+                { type: "mcq", q: "What is the name of the high school where Troy and Gabriella sing in High School Musical?", a: "East High", options: ["North High", "East High", "West High", "South High"] },
+                { type: "text", q: "What magical item causes Anna and her mom to switch bodies in the 2003 movie Freaky Friday?", a: "A fortune cookie" },
+                { type: "mcq", q: "What is the name of the stuck-up pop star played by Joe Jonas who gets sent to Camp Rock?", a: "Shane Gray", options: ["Nate", "Jason", "Nick", "Shane Gray"] },
+                { type: "text", q: "Who tells Mia Thermopolis that she is actually the Princess of Genovia?", a: "Queen Clarisse / Her grandmother" },
+                { type: "text", q: "What are the first names of the four main Cheetah Girls?", a: "Galleria, Chanel, Dorinda, Aqua" }
+            ]
+        },
+        {
+            round: "Round 4: Books & Fads",
+            questions: [
+                { type: "text", q: "What toy franchise launched in 2001 featuring dolls with 'a passion for fashion' and giant heads?", a: "Bratz" },
+                { type: "text", q: "What is the name of the vampire family that Bella Swan meets in Twilight?", a: "The Cullens" },
+                { type: "text", q: "What is the name of the magical summer camp Percy Jackson attends?", a: "Camp Half-Blood" },
+                { type: "text", q: "What colorful plastic bracelets shaped like animals were traded by everyone in school in the late 2000s?", a: "Silly Bandz" },
+                { type: "text", q: "What sport is played on flying broomsticks with Bludgers and a Snitch?", a: "Quidditch" }
+            ]
+        }
+    ];
+
+    let gameState = {
+        role: null,
+        roomCode: null,
+        playerName: null,
+        playerId: null,
+        currentRoundIdx: 0,
+        currentQIdx: 0,
+        isGameActive: false,
+        timerInterval: null
+    };
+
+    // UI Routing Helpers
+    function selectRole(role) {
+        gameState.role = role;
+        document.getElementById("view-role-select").classList.add("hidden");
+        if (role === 'host') {
+            initHostMode();
+        } else {
+            document.getElementById("view-player-login").classList.remove("hidden");
+        }
+    }
+
+    // --- TIMER HELPER ---
+    function startTimerSync(endTimeTarget, fillId, textId, onExpireCallback) {
+        if(gameState.timerInterval) clearInterval(gameState.timerInterval);
+        
+        const fillEl = document.getElementById(fillId);
+        const textEl = document.getElementById(textId);
+        const totalDuration = 30000; // 30s
+        
+        gameState.timerInterval = setInterval(() => {
+            const now = Date.now();
+            const remaining = endTimeTarget - now;
+            
+            if (remaining <= 0) {
+                clearInterval(gameState.timerInterval);
+                fillEl.style.width = "0%";
+                textEl.innerText = "TIME'S UP";
+                if(onExpireCallback) onExpireCallback();
+            } else {
+                const pct = Math.max(0, (remaining / totalDuration) * 100);
+                fillEl.style.width = `${pct}%`;
+                textEl.innerText = `${Math.ceil(remaining / 1000)}s`;
+            }
+        }, 100);
+    }
+
+    // HOST LOGIC
+    function generateRoomCode() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let code = "";
+        for (let i = 0; i < 4; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return code;
+    }
+
+    function initHostMode() {
+        gameState.roomCode = generateRoomCode();
+        document.getElementById("view-host-dash").classList.remove("hidden");
+        document.getElementById("host-room-code").innerText = gameState.roomCode;
+        document.getElementById("host-round-title").innerText = "Lobby";
+
+        const roomRef = db.ref(`rooms/${gameState.roomCode}`);
+        roomRef.set({
+            status: 'lobby',
+            roundIndex: 0,
+            questionIndex: 0
+        });
+
+        roomRef.child('players').on('value', (snap) => {
+            const players = snap.val() || {};
+            const count = Object.keys(players).length;
+            document.getElementById("host-player-count").innerText = `${count} Teams`;
+            updateLeaderboard(players);
+        });
+
+        roomRef.child('submissions').on('value', (snap) => {
+            renderHostSubmissions(snap.val() || {});
+        });
+    }
+
+    function hostStartGame() {
+        // Show Rules first
+        document.getElementById("host-round-title").innerText = "Rules";
+        document.getElementById("btn-start-game").classList.add("hidden");
+        
+        document.getElementById("host-rules-controls").classList.remove("hidden");
+        document.getElementById("host-game-controls").classList.add("hidden");
+        document.getElementById("host-leaderboard-view").classList.add("hidden");
+        
+        db.ref(`rooms/${gameState.roomCode}`).update({
+            status: 'rules'
+        });
+    }
+    
+    function hostStartRound(roundIdx) {
+        gameState.currentRoundIdx = roundIdx;
+        gameState.currentQIdx = 0;
+        gameState.isGameActive = true;
+        
+        document.getElementById("host-round-title").innerText = triviaData[roundIdx].round;
+        document.getElementById("host-rules-controls").classList.add("hidden");
+        document.getElementById("host-leaderboard-view").classList.add("hidden");
+        document.getElementById("host-game-controls").classList.remove("hidden");
+
+        db.ref(`rooms/${gameState.roomCode}`).update({
+            status: 'active',
+            roundIndex: roundIdx,
+            questionIndex: 0
+        });
+
+        displayCurrentQuestionHost();
+    }
+
+    function displayCurrentQuestionHost() {
+        const round = triviaData[gameState.currentRoundIdx];
+        const q = round.questions[gameState.currentQIdx];
+        
+        document.getElementById("host-q-indicator").innerText = `R${gameState.currentRoundIdx + 1} | Q${gameState.currentQIdx + 1}/${round.questions.length}`;
+        document.getElementById("host-current-q-text").innerText = q.q;
+        
+        const ansEl = document.getElementById("host-current-q-answer");
+        ansEl.innerText = q.a;
+        ansEl.classList.add("blurred"); // Hide by default
+
+        const mcqContainer = document.getElementById("host-mcq-options");
+        if (q.type === 'mcq') {
+            mcqContainer.classList.remove("hidden");
+            mcqContainer.innerHTML = q.options.map(opt => `<div class="bg-gray-100 p-2 rounded border border-gray-300">${opt}</div>`).join("");
+        } else {
+            mcqContainer.classList.add("hidden");
+        }
+
+        const endTime = Date.now() + 30000;
+        startTimerSync(endTime, "host-timer-fill", "host-timer-text");
+
+        db.ref(`rooms/${gameState.roomCode}`).update({
+            currentQuestion: q.q,
+            roundTitle: round.round,
+            questionNumber: gameState.currentQIdx + 1,
+            qType: q.type,
+            qOptions: q.options || null,
+            endTime: endTime
+        });
+        db.ref(`rooms/${gameState.roomCode}/submissions`).set(null);
+    }
+
+    function hostNextQuestion() {
+        const round = triviaData[gameState.currentRoundIdx];
+        if (gameState.currentQIdx < round.questions.length - 1) {
+            gameState.currentQIdx++;
+            displayCurrentQuestionHost();
+        } else {
+            showLeaderboardHost();
+        }
+    }
+    
+    function showLeaderboardHost() {
+        document.getElementById("host-game-controls").classList.add("hidden");
+        document.getElementById("host-leaderboard-view").classList.remove("hidden");
+        
+        let isGameOver = (gameState.currentRoundIdx >= triviaData.length - 1);
+        document.getElementById("leaderboard-title").innerText = isGameOver ? "🏆 FINAL STANDINGS 🏆" : `End of ${triviaData[gameState.currentRoundIdx].round} Standings`;
+        
+        const advBtn = document.getElementById("btn-advance-leaderboard");
+        if (isGameOver) {
+            advBtn.innerText = "NEW GAME";
+            advBtn.onclick = () => location.reload();
+        } else {
+            advBtn.innerText = "START NEXT ROUND ▶";
+            advBtn.onclick = () => hostStartRound(gameState.currentRoundIdx + 1);
+        }
+
+        db.ref(`rooms/${gameState.roomCode}`).update({
+            status: 'leaderboard'
+        });
+    }
+
+    function renderHostSubmissions(subs) {
+        const listEl = document.getElementById("host-submissions-list");
+        const keys = Object.keys(subs);
+        if (keys.length === 0) {
+            listEl.innerHTML = `<div class="text-gray-400 text-center py-10 font-sans font-medium">Empty (｡•́︿•̀｡)</div>`;
+            return;
+        }
+        listEl.innerHTML = "";
+        keys.forEach(playerId => {
+            const sub = subs[playerId];
+            const div = document.createElement("div");
+            div.className = "nj-item flex flex-col p-3 gap-2";
+            div.innerHTML = `
+                <span class="font-sans font-bold text-sm truncate">${sub.playerName}: <span class="font-normal text-gray-700">${sub.answer}</span></span>
+                <button onclick="awardPoints('${playerId}', 100)" class="nj-btn bg-njPink py-1 text-sm h-8 self-end px-4 w-full">✓ 100 pts</button>
+            `;
+            listEl.appendChild(div);
+        });
+    }
+
+    function awardPoints(playerId, pts) {
+        const playerRef = db.ref(`rooms/${gameState.roomCode}/players/${playerId}`);
+        playerRef.child('score').transaction(current => (current || 0) + pts);
+        event.target.innerText = "SCORED ✧";
+        event.target.classList.replace("bg-njPink", "bg-njGreen");
+    }
+
+    function updateLeaderboard(players) {
+        const lbEl = document.getElementById("host-leaderboard-list");
+        const playerArray = Object.keys(players).map(id => ({ id, ...players[id] }));
+        playerArray.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+        if (playerArray.length === 0) {
+            lbEl.innerHTML = `<div class="text-gray-400 text-center py-6 font-sans font-medium">No players joined yet.</div>`;
+            return;
+        }
+
+        lbEl.innerHTML = "";
+        playerArray.forEach((p, idx) => {
+            const div = document.createElement("div");
+            div.className = "nj-item flex justify-between items-center p-3 bg-gray-50";
+            div.innerHTML = `<span class="font-sans font-bold text-lg">#${idx + 1} ${p.name}</span> <span class="font-pixel text-2xl tracking-widest">${p.score || 0}</span>`;
+            lbEl.appendChild(div);
+        });
+    }
+
+    function hostResetScores() {
+        if(confirm("Reset all player scores to 0? Are you sure?")) {
+            db.ref(`rooms/${gameState.roomCode}/players`).once('value', (snap) => {
+                const players = snap.val() || {};
+                Object.keys(players).forEach(id => {
+                    db.ref(`rooms/${gameState.roomCode}/players/${id}`).update({ score: 0 });
+                });
+            });
+        }
+    }
+
+    // PLAYER LOGIC
+    function joinRoom() {
+        const code = document.getElementById("input-room-code").value.trim().toUpperCase();
+        const name = document.getElementById("input-player-name").value.trim();
+
+        if (code.length !== 4 || !name) {
+            alert("Please enter a valid 4-letter room code and your team name!");
+            return;
+        }
+
+        gameState.roomCode = code;
+        gameState.playerName = name;
+        const playerId = 'p_' + Math.random().toString(36).substr(2, 9);
+        gameState.playerId = playerId;
+
+        db.ref(`rooms/${code}/players/${playerId}`).set({
+            name: name,
+            score: 0
+        });
+
+        document.getElementById("view-player-login").classList.add("hidden");
+        document.getElementById("view-player-game").classList.remove("hidden");
+        document.getElementById("player-display-name").innerText = `${name}`;
+
+        db.ref(`rooms/${code}`).on('value', (snap) => {
+            const roomData = snap.val();
+            if (!roomData) return;
+            
+            const waitTitle = document.getElementById("player-waiting-title");
+            const waitSub = document.getElementById("player-waiting-subtitle");
+
+            if (roomData.status === 'active') {
+                document.getElementById("player-waiting-state").classList.add("hidden");
+                document.getElementById("player-submitted-state").classList.add("hidden");
+                document.getElementById("player-active-state").classList.remove("hidden");
+                
+                document.getElementById("player-q-num").innerText = `Q${roomData.questionNumber}`;
+                document.getElementById("player-q-text").innerText = roomData.currentQuestion;
+                
+                const mcqDiv = document.getElementById("player-mcq-input");
+                const txtDiv = document.getElementById("player-text-input");
+                
+                if (roomData.qType === 'mcq' && roomData.qOptions) {
+                    mcqDiv.classList.remove("hidden");
+                    txtDiv.classList.add("hidden");
+                    mcqDiv.innerHTML = roomData.qOptions.map(opt => 
+                        `<button onclick="submitPlayerAnswer('${opt.replace(/'/g, "\\'")}')" class="w-full py-3 bg-white hover:bg-njYellow border-2 border-black rounded-lg font-sans font-bold text-lg transition-colors active:translate-y-1">${opt}</button>`
+                    ).join("");
+                } else {
+                    mcqDiv.classList.add("hidden");
+                    txtDiv.classList.remove("hidden");
+                    document.getElementById("player-answer-input").value = "";
+                    document.getElementById("player-answer-input").disabled = false;
+                }
+                
+                if (roomData.endTime) {
+                    startTimerSync(roomData.endTime, "player-timer-fill", "player-timer-text", () => {
+                        document.getElementById("player-answer-input").disabled = true;
+                        document.getElementById("player-mcq-input").innerHTML = `<div class="text-red-500 font-bold">Time's up!</div>`;
+                        document.getElementById("player-submitted-title").innerText = "TIME'S UP! ⏰";
+                    });
+                }
+
+            } else if (roomData.status === 'rules') {
+                document.getElementById("player-active-state").classList.add("hidden");
+                document.getElementById("player-submitted-state").classList.add("hidden");
+                document.getElementById("player-waiting-state").classList.remove("hidden");
+                waitTitle.innerText = "Host is explaining rules...";
+                waitSub.innerText = "Look at the big screen!";
+            } else if (roomData.status === 'leaderboard') {
+                document.getElementById("player-active-state").classList.add("hidden");
+                document.getElementById("player-submitted-state").classList.add("hidden");
+                document.getElementById("player-waiting-state").classList.remove("hidden");
+                waitTitle.innerText = "Round Complete!";
+                waitSub.innerText = "Check the scoreboard on the big screen 👀";
+            } else {
+                document.getElementById("player-active-state").classList.add("hidden");
+                document.getElementById("player-waiting-state").classList.remove("hidden");
+                waitTitle.innerText = "Waiting for host...";
+            }
+        });
+    }
+
+    function submitPlayerAnswer(mcqAnswer = null) {
+        let answer = mcqAnswer;
+        if (!answer) {
+            const ansInput = document.getElementById("player-answer-input");
+            answer = ansInput.value.trim();
+        }
+        
+        if (!answer) {
+            alert("You gotta select or type an answer first!");
+            return;
+        }
+
+        db.ref(`rooms/${gameState.roomCode}/submissions/${gameState.playerId}`).set({
+            playerName: gameState.playerName,
+            answer: answer,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        document.getElementById("player-active-state").classList.add("hidden");
+        document.getElementById("player-submitted-state").classList.remove("hidden");
+        document.getElementById("player-submitted-title").innerText = "LOCKED IN! 🔒";
+    }
+</script>
+</body>
+</html>
