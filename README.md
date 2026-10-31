@@ -18,7 +18,11 @@ from their own phone or computer.
 5. Answers show up live in the host's inbox. Each correct answer is worth **100 points**:
    multiple-choice answers are scored automatically when time runs out, and free-text
    answers are scored by the host (who can reveal the correct answer to check).
-6. A leaderboard is shown after each round, with final standings at the end.
+6. A leaderboard is shown after each round.
+7. The game ends with the **Results** show 🏆: a Frutiger Aero–style reveal with a
+   drumroll, the top three rising on glossy podiums (confetti, crown, fanfare), and
+   everyone else dropped into the **LOSERS** Recycle Bin (sad trombone included 🎺).
+   Each team's phone reveals their own placement right as the big screen finishes.
 
 ## The rounds
 
@@ -42,6 +46,10 @@ from their own phone or computer.
 public/
   index.html          # The app: UI, styles and game logic
   trivia.json         # The trivia rounds and questions
+  results.js          # The final Results show (animation timeline, synthesized sounds, confetti)
+  results.css         # Results styles (Frutiger Aero: glass, gel podiums, bubbles)
+  results-demo.html   # Preview the Results screen with sample teams
+  img/results/        # Results artwork (SVG): hills, trophy, crown, fish, recycle bin
   404.html            # Not-found page
 firebase.json         # Firebase Hosting config (serves the public/ folder)
 .firebaserc           # Firebase project alias (y2k-trivia)
@@ -84,7 +92,27 @@ The questions live in `public/trivia.json`, as a list of rounds:
 - `type`: `"mcq"` (multiple choice) or `"text"` (free-text answer)
 - `options`: only for `mcq`; `a` must exactly match one of the options
 
+## Previewing the Results screen
+
+You don't need to play a whole game to see the final Results show. Open
+`/results-demo.html` (e.g. https://y2k-trivia.web.app/results-demo.html) and hit
+**Start the show** (turn your sound on 🔊). Options:
+
+| URL | Shows |
+|-----|-------|
+| `results-demo.html?teams=3` | Number of sample teams (default 8, max 14) |
+| `results-demo.html?view=player&me=1` | A phone's reveal for the team in that position (1 = winner, 5 = a loser) |
+| `results-demo.html?instant=1` | Skip straight to the final state |
+
 ## Deployment
 
 Merging to `main` deploys automatically to Firebase Hosting through GitHub Actions.
-Pull requests get a preview deploy link.
+
+**Want to see a change before merging it?** Every pull request gets its own
+temporary preview site. A few minutes after the PR is opened (or updated), the
+Firebase bot comments on the PR with a link like
+`https://y2k-trivia--pr8-some-branch-xxxx.web.app`. Open it to try the branch
+exactly as it would look live; the real site isn't touched until you merge.
+
+> Previews use the same Firebase database as the live site, so a game played on a
+> preview is a real game.

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3a8"/>
+      <stop offset="0.45" stop-color="#ffcc1f"/>
+      <stop offset="1" stop-color="#b37900"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="aqua" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#e0fbff"/>
+      <stop offset="0.4" stop-color="#2fd0ff"/>
+      <stop offset="1" stop-color="#0060c0"/>
+    </radialGradient>
+    <radialGradient id="pink" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#fff0f7"/>
+      <stop offset="0.4" stop-color="#ff5fae"/>
+      <stop offset="1" stop-color="#b0005a"/>
+    </radialGradient>
+    <radialGradient id="lime" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#f4ffe0"/>
+      <stop offset="0.4" stop-color="#7be13a"/>
+      <stop offset="1" stop-color="#2c8a00"/>
+    </radialGradient>
+  </defs>
+  <path d="M20 120 L10 36 L56 74 L100 14 L144 74 L190 36 L180 120 Z" fill="url(#g)" stroke="#8a5d00" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M26 112 L20 52 L56 82 L100 26 L100 70 L60 96 L30 80 Z" fill="url(#gloss)" opacity="0.55"/>
+  <rect x="18" y="104" width="164" height="22" rx="6" fill="url(#g)" stroke="#8a5d00" stroke-width="3"/>
+  <rect x="24" y="107" width="152" height="7" rx="3.5" fill="#fff" opacity="0.6"/>
+  <circle cx="10" cy="34" r="9" fill="url(#aqua)" stroke="#8a5d00" stroke-width="2"/>
+  <circle cx="100" cy="12" r="11" fill="url(#pink)" stroke="#8a5d00" stroke-width="2"/>
+  <circle cx="190" cy="34" r="9" fill="url(#aqua)" stroke="#8a5d00" stroke-width="2"/>
+  <circle cx="60" cy="115" r="7" fill="url(#lime)"/>
+  <circle cx="100" cy="115" r="8" fill="url(#aqua)"/>
+  <circle cx="140" cy="115" r="7" fill="url(#pink)"/>
+</svg>

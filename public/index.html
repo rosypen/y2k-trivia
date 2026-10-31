@@ -11,6 +11,10 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Results screen (Frutiger Aero final standings) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="results.css">
+    <script src="results.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -596,10 +600,15 @@
     }
     
     function showLeaderboardHost() {
+        let isGameOver = (gameState.currentRoundIdx >= triviaData.length - 1);
+        if (isGameOver) {
+            hostShowResults();
+            return;
+        }
+
         document.getElementById("host-game-controls").classList.add("hidden");
         document.getElementById("host-leaderboard-view").classList.remove("hidden");
-        
-        let isGameOver = (gameState.currentRoundIdx >= triviaData.length - 1);
+
         document.getElementById("leaderboard-title").innerText = isGameOver ? "🏆 FINAL STANDINGS 🏆" : `End of ${triviaData[gameState.currentRoundIdx].round} Standings`;
         
         const advBtn = document.getElementById("btn-advance-leaderboard");
@@ -613,6 +622,29 @@
 
         db.ref(`rooms/${gameState.roomCode}`).update({
             status: 'leaderboard'
+        });
+    }
+
+    // Final "Results" show (see results.js). Phones reveal each team's placement at
+    // resultsRevealAt (server time), i.e. right as the big-screen reveal finishes.
+    async function hostShowResults() {
+        if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+        document.getElementById("host-game-controls").classList.add("hidden");
+        document.getElementById("host-round-title").innerText = "Results";
+
+        const roomRef = db.ref(`rooms/${gameState.roomCode}`);
+        const snap = await roomRef.child('players').once('value');
+        const players = snap.val() || {};
+
+        roomRef.update({
+            status: 'results',
+            resultsRevealAt: serverNow() + Results.REVEAL_MS
+        });
+
+        Results.show(players, {
+            onNewGame: () => location.reload(),
+            // Host skipped the animation: let phones reveal right away too
+            onSkip: () => roomRef.update({ resultsRevealAt: serverNow() })
         });
     }
 
@@ -719,7 +751,19 @@
             const waitTitle = document.getElementById("player-waiting-title");
             const waitSub = document.getElementById("player-waiting-subtitle");
 
-            if (roomData.status === 'active') {
+            if (roomData.status !== 'results') Results.hidePlayer();
+
+            if (roomData.status === 'results') {
+                if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+                document.getElementById("player-active-state").classList.add("hidden");
+                document.getElementById("player-waiting-state").classList.remove("hidden");
+                Results.showPlayer({
+                    players: roomData.players || {},
+                    playerId: gameState.playerId,
+                    revealAt: roomData.resultsRevealAt,
+                    now: serverNow
+                });
+            } else if (roomData.status === 'active') {
                 document.getElementById("player-waiting-state").classList.add("hidden");
                 document.getElementById("player-submitted-state").classList.add("hidden");
                 document.getElementById("player-active-state").classList.remove("hidden");

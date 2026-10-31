@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9fd8ff" stop-opacity="0.55"/>
+      <stop offset="0.3" stop-color="#e8f7ff" stop-opacity="0.35"/>
+      <stop offset="0.7" stop-color="#bfe6ff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#5aa9e6" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#9ccfee"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="arrow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ff06a"/>
+      <stop offset="1" stop-color="#2e9e1a"/>
+    </linearGradient>
+  </defs>
+  <!-- crumpled paper peeking out -->
+  <g>
+    <path d="M42 40 l14 -22 l12 10 l10 -16 l12 18 l14 -8 l6 22 Z" fill="#fdfdfd" stroke="#b7c6d6" stroke-width="2"/>
+    <path d="M56 18 l6 18 M78 12 l2 24 M100 22 l-6 16" stroke="#cfd9e3" stroke-width="2"/>
+    <path d="M96 34 l18 -14 l10 16 Z" fill="#fff6c9" stroke="#d8c88a" stroke-width="2"/>
+  </g>
+  <!-- bin body -->
+  <path d="M24 44 L36 186 C 38 192 122 192 124 186 L136 44 Z" fill="url(#glass)" stroke="#5c9ccc" stroke-width="2.5"/>
+  <!-- vertical ridges -->
+  <path d="M52 56 L58 176 M80 58 V178 M108 56 L102 176" stroke="#ffffff" stroke-opacity="0.55" stroke-width="3"/>
+  <!-- gloss stripe -->
+  <path d="M38 52 L48 182 L60 182 L52 52 Z" fill="url(#gloss)" opacity="0.8"/>
+  <!-- rim -->
+  <ellipse cx="80" cy="44" rx="58" ry="10" fill="url(#rim)" stroke="#5c9ccc" stroke-width="2.5"/>
+  <ellipse cx="80" cy="44" rx="48" ry="5.5" fill="#d9efff" stroke="#8bbde0" stroke-width="1.5"/>
+  <!-- recycle arrows -->
+  <g transform="translate(80 118) scale(0.9)" fill="url(#arrow)" stroke="#1f6e10" stroke-width="2" stroke-linejoin="round">
+    <path d="M-6 -34 L10 -34 L22 -14 L30 -19 L24 2 L4 -4 L12 -8 L4 -22 Z"/>
+    <path d="M32 12 L24 28 L0 28 L0 38 L-14 22 L0 6 L0 16 L18 16 Z"/>
+    <path d="M-30 18 L-38 4 L-26 -16 L-34 -20 L-14 -26 L-8 -6 L-16 -10 L-26 6 Z"/>
+  </g>
+</svg>
